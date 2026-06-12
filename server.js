@@ -1,10 +1,12 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static(__dirname));
 
 // ─── In-memory store ───────────────────────────────────────────────────────
 let siteStatus = { online: true, toggledAt: new Date().toISOString() };
@@ -202,7 +204,10 @@ app.get('/api/monitor/6hr', (req, res) => {
 app.get('/api/monitor/12hr', (req, res) => {
   res.json({ window: '12hr', totalMinutes: 720, slotMinutes: 60, totalCount: ordersInWindow(720).length, slots: slotBreakdown(720, 60) });
 });
-
+// Home page route
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
 // ─── Start ─────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
   console.log(`\n✅  OnlyMobiles API running at http://localhost:${PORT}`);
